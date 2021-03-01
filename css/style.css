@@ -42,7 +42,7 @@ body{
 }
 main {
     display: grid;
-    grid-template-rows:1fr 1fr ;
+    grid-template-rows:1fr 1fr 1fr ;
     gap: 30px;
 }
 button{
@@ -85,4 +85,9 @@ footer{
     background-color:rgb(85, 85, 104);
     color: rgb(226, 175, 175);
     padding: auto;
+}
+canvas{
+    background-color: aliceblue;
+    width: 960px;
+    
 }

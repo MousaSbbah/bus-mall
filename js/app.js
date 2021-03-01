@@ -1,8 +1,11 @@
 'use strict';
 
-
-function randomNumber( min, max ) {
-  return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+let random=0;
+function randomNumber( min, max,index1,index2,index3 ) {
+  do
+  {random= Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+  }while(random === index1 || random===index2 || random===index3);
+  return random;
 }
 
 const productName = [
@@ -57,6 +60,7 @@ const firstImage =document.getElementById('img1');
 const secondImage =document.getElementById('img2');
 const lastImage =document.getElementById('img3');
 const resultSection=document.getElementById('result_container');
+const resultChart=document.getElementById('canvasChart');
 
 Product.all = [];
 function Product(name,pathOfImg) {
@@ -77,13 +81,18 @@ let img2Index=0;
 let img3Index=0;
 function shuffle (){
   do {
-    img1Index=randomNumber(0,productName.length-1);
+    let newIndex1 = randomNumber(0,productName.length-1,img1Index,img3Index,img2Index);
+    let newIndex2 =randomNumber(0,productName.length-1,img2Index,img3Index,img1Index);
+    let newIndex3=randomNumber(0,productName.length-1,img3Index,img1Index,img2Index);
+
+
+    img1Index= newIndex1;
     firstImage.src=imgPath[img1Index];
 
-    img2Index=randomNumber(0,productName.length-1);
+    img2Index=newIndex2;
     secondImage.src=imgPath[img2Index];
 
-    img3Index=randomNumber(0,productName.length-1);
+    img3Index=newIndex3;
     lastImage.src=imgPath[img3Index];
 
   } while (img1Index === img2Index || img2Index === img3Index || img3Index === img1Index);
@@ -121,7 +130,7 @@ function handelClick(event){
   }else{
     imageSection.removeEventListener( 'click', handelClick );
     const veiwResultButton= document.createElement('button');
-    resultSection.appendChild(veiwResultButton);
+    resultChart.appendChild(veiwResultButton);
     veiwResultButton.class='resultButton';
     veiwResultButton.textContent='View Results';
     veiwResultButton.onclick=function showTheResult() {
@@ -138,13 +147,65 @@ function handelClick(event){
         liElement.textContent=`${Product.all[i].name}   had   ${Product.all[i].vote}   votes, and was seen   ${Product.all[i].shown}   times.`;
 
       }
+      const canvasElement=document.createElement('canvas');
+      resultChart .appendChild(canvasElement);
+      canvasElement.id='myChart';
+      renderChart();
+      veiwResultButton.textContent='The Result';
       veiwResultButton.onclick=false;
     };
 
   }
 }
 
-
 shuffle();
+
+function renderChart() {
+
+  let nameArray = [];
+  let shownArray = [];
+  let votesArray = [];
+
+  for(let i = 0; i < Product.all.length; i++) {
+    nameArray.push(Product.all[i].name);
+    shownArray.push(Product.all[i].shown);
+    votesArray.push(Product.all[i].vote);
+
+  }
+
+  let ctx = document.getElementById( 'myChart' ).getContext( '2d' );
+  // eslint-disable-next-line no-undef
+  new Chart( ctx, {
+    type: 'bar',
+    data: {
+      labels: nameArray,
+      datasets: [
+        {
+          label: '# of Shown',
+          data: shownArray,
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 3
+        },{
+          label: '# of Votes',
+          data: votesArray,
+          backgroundColor: '#8ac4d0',
+          borderColor: '#28527a',
+          borderWidth: 3
+        }
+      ]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  } );
+}
+
 // const resultButton = document.getElementById('result_button');
 
