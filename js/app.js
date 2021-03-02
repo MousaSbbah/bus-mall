@@ -1,6 +1,7 @@
 'use strict';
 
 let random=0;
+
 function randomNumber( min, max,index1,index2,index3 ) {
   do
   {random= Math.floor( Math.random() * ( max - min + 1 ) ) + min;
@@ -69,6 +70,7 @@ function Product(name,pathOfImg) {
   this.shown =0 ;
   this.vote=0;
   Product.all.push(this);
+  
 }
 
 for (let index = 0; index < productName.length; index++) {
@@ -154,10 +156,19 @@ function handelClick(event){
       veiwResultButton.textContent='The Result';
       veiwResultButton.onclick=false;
     };
+    localStorage.setItem( 'product', JSON.stringify( Product.all ) );
 
   }
 }
-
+function getData() {
+  const data = localStorage.getItem('product');
+  if(data) {
+    const objData = JSON.parse(data);
+    Product.all = objData;
+   
+  }
+}
+getData();
 shuffle();
 
 function renderChart() {
